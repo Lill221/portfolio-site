@@ -107,6 +107,22 @@ document.querySelectorAll('[data-contact]').forEach(button => button.addEventLis
 const dialog = document.querySelector('.video-dialog');
 const player = document.querySelector('.full-video');
 const previewVideos = [...document.querySelectorAll('.ambient-video')];
+// The monitor's picture, timecode and playhead use the same media clock.
+const monitorVideo = document.querySelector('.monitor-video');
+const monitorTime = document.querySelector('.monitor-time');
+const monitorPlayhead = document.querySelector('.playhead');
+let monitorFrame;
+function updateMonitor() {
+  const time = monitorVideo.currentTime;
+  const frame = Math.floor(time * 30);
+  monitorTime.textContent = [Math.floor(frame / 108000), Math.floor(frame / 1800) % 60, Math.floor(frame / 30) % 60, frame % 30]
+    .map(value => String(value).padStart(2, '0')).join(':');
+  monitorPlayhead.style.left = `${1 + (monitorVideo.duration ? time / monitorVideo.duration : 0) * 98}%`;
+  if (!monitorVideo.paused) monitorFrame = requestAnimationFrame(updateMonitor);
+}
+monitorVideo.addEventListener('playing', () => { cancelAnimationFrame(monitorFrame); updateMonitor(); });
+monitorVideo.addEventListener('pause', () => { cancelAnimationFrame(monitorFrame); updateMonitor(); });
+monitorVideo.addEventListener('loadedmetadata', updateMonitor);
 const visiblePreviews = new Set();
 let motionPaused = reduceMotion.matches;
 const motionButton = document.querySelector('.motion-toggle');
