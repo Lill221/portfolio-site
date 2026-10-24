@@ -138,7 +138,7 @@ function setMotion(paused) {
   document.body.classList.toggle('motion-paused', paused);
   if (paused) settleServices();
   motionButton.setAttribute('aria-pressed', String(paused));
-  motionButton.innerHTML = paused ? '▶ <span>Включить анимацию</span>' : 'Ⅱ <span>Пауза анимации</span>';
+  motionButton.querySelector('.motion-label').textContent = paused ? 'Включить анимацию' : 'Пауза анимации';
   syncPreviews();
 }
 motionButton.addEventListener('click', () => setMotion(!motionPaused));

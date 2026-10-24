@@ -35,3 +35,16 @@
 .monitor-time{font-variant-numeric:tabular-nums;min-width:84px;text-align:center;background:#09090960;padding:3px 5px}
 @media(max-width:1050px){.hero-content{grid-template-columns:minmax(0,1fr) 170px;column-gap:28px;row-gap:34px}.hero-aside{font-size:11px}}
 @media(max-width:700px){.hero-content{top:50%;transform:translateY(-40%);grid-template-columns:1fr;row-gap:26px}.hero h1{font-size:clamp(52px,13.4vw,86px)}.hero-label{margin-bottom:20px}.hero-aside{padding:0;font-size:11px;line-height:1.7}.hero-actions{gap:24px}.hero-actions .text-link{min-height:36px;align-items:flex-start}.monitor-picture{height:auto;aspect-ratio:16/9}}
+
+/* Vector controls inherit the palette instead of invoking mobile emoji fonts. */
+.icon{display:inline-block;width:1em;height:1em;flex-shrink:0;vertical-align:-.125em;color:inherit;pointer-events:none}
+.icon-play{fill:currentColor;stroke:none}
+.motion-icon{display:inline-flex;align-items:center;font-size:1.2em}
+.motion-icon .icon-play{display:none}
+.motion-toggle[aria-pressed="true"] .icon-play{display:inline-block}
+.motion-toggle[aria-pressed="true"] .icon-pause{display:none}
+.service-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.small-cross{display:inline-flex;align-items:center;justify-content:center}
+.small-cross .icon,.marquee .icon{stroke-width:1.2}
+.contact-arrow{line-height:1}
+.mobile-nav a:last-child .icon{margin-left:.35em}
