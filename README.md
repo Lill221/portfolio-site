@@ -28,6 +28,8 @@ python -m http.server 4173 --directory dist
 | `1.MP4` | Collage edit | `assets/work-1.mp4` | `assets/preview-1.mp4` |
 | `3.MP4` | VFX cut | `assets/work-3.mp4` | `assets/preview-3.mp4` |
 
+На первом экране фоном играет облегчённый беззвучный фрагмент City sessions (`assets/hero-city.mp4`, 16 секунд). Он управляется общей кнопкой паузы и останавливается вне экрана. Кнопки просмотра прозрачные, с тонкой обводкой. Раскрытие и сворачивание услуг анимированы по высоте и прозрачности, включая быстрые повторные нажатия.
+
 Превью без звука загружаются только при появлении в экране. Полные видео сохраняют звук и открываются после нажатия. Закрытие диалога останавливает воспроизведение; фоновые превью при открытом плеере приостановлены. Реализована поддержка `prefers-reduced-motion`, клавиатуры и кнопки паузы анимации.
 
 ## Следующий этап
@@ -38,7 +40,7 @@ python -m http.server 4173 --directory dist
 
 Manrope используется по SIL Open Font License; лицензия лежит в `dist/assets/OFL-Manrope.txt`. Шрифты загружаются локально.
 
-`dist/assets/wave.webp` — фон, созданный встроенным imagegen для этого сайта. Он служит оформлением и не представлен как работа автора. Исходный промпт: «Use case: photorealistic-natural. Asset type: full bleed cinematic background for a minimalist video editor portfolio. Create a widescreen 16:9 black and white macro photograph of a sculptural ocean wave / flowing black liquid, with fine silver highlights and foamy spray. Very dark deep blacks, cinematic film grain, low key lighting, highly tactile and photorealistic. A large curling wave shape spans the right two thirds diagonally, leaving darker negative space in the left third and center for white typography. Editorial arthouse film still, dramatic but restrained. No people, no text, no lettering, no logo, no watermark, no frame. Render 1920x1080 or similar landscape.»
+`dist/assets/wave.webp` — изображение из первой версии, созданное встроенным imagegen. В текущей версии главный фон заменён видео автора; изображение сохранено в исходниках для истории дизайна. Исходный промпт: «Use case: photorealistic-natural. Asset type: full bleed cinematic background for a minimalist video editor portfolio. Create a widescreen 16:9 black and white macro photograph of a sculptural ocean wave / flowing black liquid, with fine silver highlights and foamy spray. Very dark deep blacks, cinematic film grain, low key lighting, highly tactile and photorealistic. A large curling wave shape spans the right two thirds diagonally, leaving darker negative space in the left third and center for white typography. Editorial arthouse film still, dramatic but restrained. No people, no text, no lettering, no logo, no watermark, no frame. Render 1920x1080 or similar landscape.»
 
 ## Проверка
 

@@ -43,7 +43,65 @@ menuButton.addEventListener('click', () => setMenu(menuButton.getAttribute('aria
 mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && header.classList.contains('menu-open')) { setMenu(false); menuButton.focus(); } });
 window.addEventListener('resize', () => { if (window.innerWidth > 700) setMenu(false); });
-document.querySelectorAll('.service-item').forEach(details => details.addEventListener('toggle', () => { if (details.open) document.querySelectorAll('.service-item').forEach(other => { if (other !== details) other.open = false; }); }));
+// Keep native details semantics, but animate both directions and rapid reversals.
+const serviceStates = new Map();
+function settleService(details, expanded) {
+  const state = serviceStates.get(details);
+  if (state.animation) state.animation.onfinish = null;
+  state.animation?.cancel();
+  state.fade?.cancel();
+  state.animation = state.fade = null;
+  state.expanded = expanded;
+  details.open = expanded;
+  details.style.height = '';
+  details.style.overflow = '';
+  details.classList.remove('is-closing');
+  state.content.style.opacity = '';
+  state.summary.setAttribute('aria-expanded', String(expanded));
+}
+function animateService(details, expanded) {
+  const state = serviceStates.get(details);
+  const startHeight = details.getBoundingClientRect().height;
+  const startOpacity = details.open ? Number(getComputedStyle(state.content).opacity) : 0;
+  if (state.animation) state.animation.onfinish = null;
+  state.animation?.cancel();
+  state.fade?.cancel();
+  state.expanded = expanded;
+  state.summary.setAttribute('aria-expanded', String(expanded));
+  if (reduceMotion.matches || document.body.classList.contains('motion-paused') || !details.animate) {
+    settleService(details, expanded);
+    return;
+  }
+  // Leave the panel rendered until a closing animation actually finishes.
+  details.open = true;
+  details.style.height = `${startHeight}px`;
+  details.style.overflow = 'hidden';
+  details.classList.toggle('is-closing', !expanded);
+  const box = getComputedStyle(details);
+  const edges = ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth']
+    .reduce((sum, property) => sum + parseFloat(box[property]), 0);
+  const endHeight = state.summary.offsetHeight + edges + (expanded ? state.content.offsetHeight : 0);
+  const timing = { duration: expanded ? 560 : 460, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+  state.animation = details.animate([{ height: `${startHeight}px` }, { height: `${endHeight}px` }], timing);
+  state.fade = state.content.animate([{ opacity: startOpacity }, { opacity: expanded ? 1 : 0 }], timing);
+  state.animation.onfinish = () => settleService(details, expanded);
+}
+document.querySelectorAll('.service-item').forEach(details => {
+  const summary = details.querySelector('summary');
+  serviceStates.set(details, { summary, content: details.querySelector('.service-detail'), expanded: details.open, animation: null, fade: null });
+  summary.setAttribute('aria-expanded', String(details.open));
+  summary.addEventListener('click', event => {
+    event.preventDefault();
+    const expanded = !serviceStates.get(details).expanded;
+    if (expanded) serviceStates.forEach((state, other) => { if (other !== details && state.expanded) animateService(other, false); });
+    animateService(details, expanded);
+  });
+});
+function settleServices() {
+  serviceStates.forEach((state, details) => { if (state.animation) settleService(details, state.expanded); });
+}
+window.addEventListener('resize', settleServices);
+reduceMotion.addEventListener('change', settleServices);
 let toastTimer;
 document.querySelectorAll('[data-contact]').forEach(button => button.addEventListener('click', () => { const toast = document.querySelector('.toast'); toast.textContent = 'Способ связи добавим на следующем этапе.'; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3500); }));
 const dialog = document.querySelector('.video-dialog');
@@ -62,6 +120,7 @@ function syncPreviews() {
 function setMotion(paused) {
   motionPaused = paused;
   document.body.classList.toggle('motion-paused', paused);
+  if (paused) settleServices();
   motionButton.setAttribute('aria-pressed', String(paused));
   motionButton.innerHTML = paused ? '▶ <span>Включить анимацию</span>' : 'Ⅱ <span>Пауза анимации</span>';
   syncPreviews();
